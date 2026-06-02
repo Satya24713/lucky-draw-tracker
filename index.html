@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lucky Draw Tracker</title>
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    
+    <!-- PWA Manifest & Theme Color -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#6750A4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <style>
+        /* CSS Variables for Material 3 Design Tokens */
+        :root {
+            --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Light Theme Palette (Material 3 Indigo/Violet) */
+            --md-sys-color-primary: #6750A4;
+            --md-sys-color-primary-rgb: 103, 80, 164;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #EADDFF;
+            --md-sys-color-on-primary-container: #21005D;
+            --md-sys-color-secondary: #625B71;
+            --md-sys-color-on-secondary: #FFFFFF;
+            --md-sys-color-secondary-container: #E8DEF8;
+            --md-sys-color-on-secondary-container: #1D192B;
+            --md-sys-color-background: #FEF7FF;
+            --md-sys-color-on-background: #1D1B20;
+            --md-sys-color-surface: #F7F2FA;
+            --md-sys-color-surface-container: #F3EDF7;
+            --md-sys-color-surface-container-high: #ECE6F0;
+            --md-sys-color-on-surface: #1D1B20;
+            --md-sys-color-on-surface-variant: #49454F;
+            --md-sys-color-outline: #79747E;
+            --md-sys-color-outline-variant: #CAC4D0;
+            
+            --md-sys-color-success: #2E7D32;
+            --md-sys-color-success-container: #C8E6C9;
+            --md-sys-color-on-success-container: #1B5E20;
+            
+            --md-sys-color-error: #B3261E;
+            --md-sys-color-error-container: #F9DEDC;
+            --md-sys-color-on-error: #FFFFFF;
+            
+            --shadow-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30);
+            --shadow-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30);
+            --shadow-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30);
+            
+            --transition-duration: 0.25s;
+            --transition-timing: cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        body.dark-theme {
+            /* Dark Theme Palette */
+            --md-sys-color-primary: #D0BCFF;
+            --md-sys-color-primary-rgb: 208, 188, 255;
+            --md-sys-color-on-primary: #381E72;
+            --md-sys-color-primary-container: #4F378B;
+            --md-sys-color-on-primary-container: #EADDFF;
+            --md-sys-color-secondary: #CCC2DC;
+            --md-sys-color-on-secondary: #332D41;
+            --md-sys-color-secondary-container: #4A4458;
+            --md-sys-color-on-secondary-container: #E8DEF8;
+            --md-sys-color-background: #141218;
+            --md-sys-color-on-background: #E6E1E5;
+            --md-sys-color-surface: #211F26;
+            --md-sys-color-surface-container: #1D1B20;
+            --md-sys-color-surface-container-high: #2B2930;
+            --md-sys-color-on-surface: #E6E1E5;
+            --md-sys-color-on-surface-variant: #CAC4D0;
+            --md-sys-color-outline: #938F99;
+            --md-sys-color-outline-variant: #49454F;
+            
+            --md-sys-color-success: #81C784;
+            --md-sys-color-success-container: #1B5E20;
+            --md-sys-color-on-success-container: #C8E6C9;
+            
+            --md-sys-color-error: #F2B8B5;
+            --md-sys-color-error-container: #8C1D18;
+            --md-sys-color-on-error: #601410;
+            
+            --shadow-1: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+            --shadow-2: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+            --shadow-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.30), 0px 1px 3px 0px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: #121212; /* Sleek pitch background for desktop frame */
+            color: var(--md-sys-color-on-background);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            transition: background-color var(--transition-duration) var(--transition-timing);
+        }
+
+        /* Android Phone frame wrapper for Desktop view */
+        .app-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            max-width: 440px;
+            max-height: 900px;
+            background-color: var(--md-sys-color-background);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0px 24px 48px rgba(0, 0, 0, 0.4);
+            border-radius: 40px;
+            border: 8px solid #2d2d30; /* Phone border outline */
+            transition: background-color var(--transition-duration) var(--transition-timing);
+        }
+
+        /* Status bar mock for Android look */
+        .status-bar {
+            height: 36px;
+            background-color: var(--md-sys-color-background);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--md-sys-color-on-background);
+            z-index: 10;
+            user-select: none;
+            transition: background-color var(--transition-duration) var(--transition-timing);
+        }
+
+        .status-bar-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .status-bar-icons span {
+            font-size: 1.1rem;
+        }
+
+        /* Scrollable Screen Content */
+        .screen-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 90px 20px; /* Space for bottom navbar */
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar for premium feel */
+        .screen-content::-webkit-scrollbar {
+            width: 5px;
+        }
+        .screen-content::-webkit-scrollbar-thumb {
+            background: var(--md-sys-color-outline-variant);
+            border-radius: 10px;
+        }
+
+        /* Header Style */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--md-sys-color-on-background);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Language Toggle Pill Switcher */
+        .lang-switch {
+            display: flex;
+            background-color: var(--md-sys-color-surface-container-high);
+            border-radius: 20px;
+            padding: 3px;
+            cursor: pointer;
+            border: 1px solid var(--md-sys-color-outline-variant);
+            font-size: 0.75rem;
+            font-weight: 700;
+            user-select: none;
+            position: relative;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border-radius: 16px;
+            color: var(--md-sys-color-on-surface-variant);
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        .lang-btn.active {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            box-shadow: var(--shadow-1);
+        }
+
+        /* Round IconButton Style */
+        .icon-btn {
+            background-color: var(--md-sys-color-surface-container);
+            border: none;
+            color: var(--md-sys-color-on-surface);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        .icon-btn:hover {
+            background-color: var(--md-sys-color-surface-container-high);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Today's Display Panel Card (Material 3 Banner) */
+        .dashboard-banner {
+            background: linear-gradient(135deg, var(--md-sys-color-primary), #4f378b);
+            color: var(--md-sys-color-on-primary);
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: var(--shadow-2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-banner::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            pointer-events: none;
+        }
+
+        .banner-left {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1;
+        }
+
+        .banner-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.85;
+            font-weight: 600;
+        }
+
+        .banner-date {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-top: -6px;
+            opacity: 0.9;
+        }
+
+        .banner-winner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            width: fit-content;
+            max-width: 240px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .banner-winner strong {
+            font-weight: 700;
+        }
+
+        .banner-number-box {
+            width: 72px;
+            height: 72px;
+            background: var(--md-sys-color-on-primary);
+            color: var(--md-sys-color-primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            box-shadow: var(--shadow-3);
+            z-index: 1;
+            transform: rotate(4deg);
+        }
+
+        /* Material 3 Card standard */
+        .m3-card {
+            background-color: var(--md-sys-color-surface-container);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid var(--md-sys-color-outline-variant);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        .m3-card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* TAB PANELS */
+        .tab-panel {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeIn 0.3s var(--transition-timing);
+        }
+
+        .tab-panel.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CALENDAR TAB */
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .calendar-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .calendar-grid-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 8px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s var(--transition-timing);
+            position: relative;
+            color: var(--md-sys-color-on-surface);
+            background-color: var(--md-sys-color-surface-container-high);
+        }
+
+        .calendar-day.empty {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .calendar-day.today {
+            border: 2px solid var(--md-sys-color-primary);
+        }
+
+        .calendar-day.has-number {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            font-weight: 700;
+            box-shadow: var(--shadow-1);
+        }
+
+        .calendar-day.has-number:hover {
+            transform: scale(1.08);
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+        }
+
+        .calendar-day:active {
+            transform: scale(0.92);
+        }
+
+        /* Material List & Rows */
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border-radius: 28px;
+            background-color: var(--md-sys-color-surface-container-high);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            color: var(--md-sys-color-on-surface);
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            font-weight: 500;
+            outline: none;
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        .search-input:focus {
+            border-color: var(--md-sys-color-primary);
+            background-color: var(--md-sys-color-surface);
+            box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--md-sys-color-on-surface-variant);
+            pointer-events: none;
+        }
+
+        .participants-scroll {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .participant-row {
+            background-color: var(--md-sys-color-surface-container-high);
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid transparent;
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        .participant-row:hover {
+            border-color: var(--md-sys-color-outline-variant);
+        }
+
+        .row-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 70%;
+        }
+
+        .row-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .row-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .row-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--md-sys-color-on-surface);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .row-date {
+            font-size: 0.72rem;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        .row-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .row-number {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+
+        /* Badge count styling */
+        .badge-count {
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* Material Form Styling */
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-field label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface-variant);
+            padding-left: 4px;
+        }
+
+        .form-field input {
+            padding: 12px 16px;
+            border-radius: 14px;
+            background-color: var(--md-sys-color-surface-container-high);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            color: var(--md-sys-color-on-surface);
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        .form-field input:focus {
+            border-color: var(--md-sys-color-primary);
+            background-color: var(--md-sys-color-surface);
+        }
+
+        /* M3 Buttons */
+        .btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-duration) var(--transition-timing);
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            box-shadow: var(--shadow-1);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.92;
+            box-shadow: var(--shadow-2);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-secondary {
+            background-color: var(--md-sys-color-secondary-container);
+            color: var(--md-sys-color-on-secondary-container);
+        }
+
+        .btn-secondary:hover {
+            opacity: 0.92;
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--md-sys-color-outline);
+            color: var(--md-sys-color-primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--md-sys-color-primary-container);
+        }
+
+        .btn-outline:active {
+            transform: scale(0.97);
+        }
+
+        /* Admin Dashboard Change Credentials details tag styling */
+        details.m3-details {
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 16px;
+            background-color: var(--md-sys-color-surface-container);
+            overflow: hidden;
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        details.m3-details summary {
+            padding: 14px 16px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+            color: var(--md-sys-color-on-surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.m3-details summary::after {
+            content: 'expand_more';
+            font-family: 'Material Symbols Rounded';
+            font-size: 1.2rem;
+            color: var(--md-sys-color-on-surface-variant);
+            transition: transform var(--transition-duration) var(--transition-timing);
+        }
+
+        details[open].m3-details summary::after {
+            transform: rotate(180deg);
+        }
+
+        .details-content {
+            padding: 4px 16px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+
+        /* Bottom Nav Bar (Material 3 Style) */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background-color: var(--md-sys-color-surface-container);
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 10;
+            transition: background-color var(--transition-duration) var(--transition-timing);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            color: var(--md-sys-color-on-surface-variant);
+            height: 100%;
+            position: relative;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .nav-item-icon-wrapper {
+            position: relative;
+            height: 32px;
+            width: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s var(--transition-timing);
+        }
+
+        .nav-item span.material-symbols-rounded {
+            font-size: 1.4rem;
+            z-index: 2;
+            transition: font-weight 0.2s;
+        }
+
+        .nav-item-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            z-index: 2;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+        }
+
+        /* M3 Bottom Nav Active State with rounded pill behind icon */
+        .nav-item.active {
+            color: var(--md-sys-color-on-background);
+        }
+
+        .nav-item.active .nav-item-icon-wrapper {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+        }
+
+        .nav-item.active span.material-symbols-rounded {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        .nav-item.active .nav-item-label {
+            font-weight: 700;
+        }
+
+        /* Android Bottom Gesture navigation indicator */
+        .gesture-indicator {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 5px;
+            background-color: var(--md-sys-color-on-surface);
+            border-radius: 10px;
+            opacity: 0.3;
+            z-index: 11;
+            pointer-events: none;
+        }
+
+        /* MODAL & BOTTOM SHEET STYLING */
+        .bottom-sheet-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s var(--transition-timing);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Align sheet to bottom */
+        }
+
+        .bottom-sheet-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .bottom-sheet {
+            background-color: var(--md-sys-color-surface);
+            border-radius: 28px 28px 0 0;
+            padding: 8px 24px 32px 24px;
+            box-shadow: var(--shadow-3);
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.1, 1, 0.1, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .bottom-sheet-overlay.active .bottom-sheet {
+            transform: translateY(0);
+        }
+
+        /* Bottom Sheet Handle/Indicator bar */
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background-color: var(--md-sys-color-outline-variant);
+            border-radius: 10px;
+            align-self: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .sheet-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        /* Lucky Number Display inside history detail modal */
+        .history-number-badge {
+            width: 80px;
+            height: 80px;
+            background-color: var(--md-sys-color-success-container);
+            color: var(--md-sys-color-on-success-container);
+            border-radius: 24px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 12px auto;
+            box-shadow: var(--shadow-1);
+        }
+
+        .history-meta-text {
+            font-size: 0.9rem;
+            color: var(--md-sys-color-on-surface-variant);
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .history-winner-highlight {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+            background-color: var(--md-sys-color-primary-container);
+            padding: 10px 16px;
+            border-radius: 16px;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* Sync bottom footer links */
+        .sync-footer {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .sync-btn {
+            background: none;
+            border: none;
+            font-family: var(--font-family);
+            color: var(--md-sys-color-primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-decoration: underline;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sync-btn span {
+            font-size: 0.95rem;
+        }
+
+        /* Desktop specific media adjustments */
+        @media (max-width: 480px) {
+            body {
+                background-color: var(--md-sys-color-background);
+            }
+            .app-wrapper {
+                border: none;
+                border-radius: 0;
+                max-width: 100%;
+                max-height: 100vh;
+            }
+            .status-bar {
+                display: none; /* Hide custom status bar on real phones */
+            }
+            .screen-content {
+                padding-top: 20px;
+            }
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(103, 80, 164, 0.25);
+            transform: scale(0);
+            animation: ripple-animation 0.5s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <!-- Android Top Status Bar Simulator -->
+    <div class="status-bar">
+        <div id="statusTime">18:30</div>
+        <div class="status-bar-icons">
+            <span class="material-symbols-rounded" style="font-size:1rem;">wifi</span>
+            <span class="material-symbols-rounded" style="font-size:1rem;">signal_cellular_alt</span>
+            <span class="material-symbols-rounded" style="font-size:1.1rem;">battery_5_bar</span>
+        </div>
+    </div>
+
+    <!-- Main Screen Viewport scroll container -->
+    <div class="screen-content">
+        <header>
+            <h1 data-i18n="appTitle">Lucky Draw Tracker</h1>
+            <div class="header-actions">
+                <!-- Translation toggle button -->
+                <div class="lang-switch" id="langSwitchBtn">
+                    <div class="lang-btn" id="langOptionHi">हिन्दी</div>
+                    <div class="lang-btn" id="langOptionEn">EN</div>
+                </div>
+                <!-- Dark mode toggle -->
+                <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+                    <span class="material-symbols-rounded">dark_mode</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Top Display Banner: Dashboard -->
+        <div class="dashboard-banner">
+            <div class="banner-left">
+                <div>
+                    <div class="banner-label" data-i18n="todaysNumber">Today's Number</div>
+                    <div class="banner-date" id="todayFriendlyDate">--</div>
+                </div>
+                <div class="banner-winner">
+                    <span>🏆 <span data-i18n="winnerPrefix">Winner:</span> <strong id="winnerNameDisplay">Satya Vishwakarma</strong></span>
+                </div>
+            </div>
+            <div class="banner-number-box" id="todayValDisplay">--</div>
+        </div>
+
+        <!-- ==================== TAB 1: CALENDAR VIEW ==================== -->
+        <div class="tab-panel active" id="tabCalendar">
+            <div class="m3-card">
+                <div class="calendar-nav">
+                    <button class="icon-btn" id="prevMonth">
+                        <span class="material-symbols-rounded">chevron_left</span>
+                    </button>
+                    <span class="calendar-title" id="monthYearTitle">June 2026</span>
+                    <button class="icon-btn" id="nextMonth">
+                        <span class="material-symbols-rounded">chevron_right</span>
+                    </button>
+                </div>
+                <div class="calendar-grid-header">
+                    <div data-i18n="daySu">S</div>
+                    <div data-i18n="dayMo">M</div>
+                    <div data-i18n="dayTu">T</div>
+                    <div data-i18n="dayWe">W</div>
+                    <div data-i18n="dayTh">T</div>
+                    <div data-i18n="dayFr">F</div>
+                    <div data-i18n="daySa">S</div>
+                </div>
+                <div class="calendar-grid" id="daysContainer"></div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 2: PARTICIPANTS REGISTRY ==================== -->
+        <div class="tab-panel" id="tabRegistry">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="font-size:1.1rem; font-weight:700;" data-i18n="listTitle">Registry Database</h2>
+                <span class="badge-count" id="badgeCountLabel">0</span>
+            </div>
+            
+            <div class="search-container">
+                <span class="material-symbols-rounded search-icon">search</span>
+                <input type="text" class="search-input" id="normalSearchInput" placeholder="Search by name / खोजें...">
+            </div>
+
+            <div class="participants-scroll" id="pListContainer">
+                <!-- Script Injection -->
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: ADMIN CONSOLE ==================== -->
+        <div class="tab-panel" id="tabAdmin">
+            <!-- Login View -->
+            <div id="adminLoginView" class="m3-card">
+                <div class="m3-card-title" style="justify-content: center; margin-bottom: 8px;" data-i18n="adminLoginTitle">Admin Portal Login</div>
+                <div class="form-field">
+                    <label data-i18n="labelAdminId">Admin ID</label>
+                    <input type="text" id="adminIdInput" placeholder="ADMIN">
+                </div>
+                <div class="form-field">
+                    <label data-i18n="labelAdminPass">Password</label>
+                    <input type="password" id="adminPassInput" placeholder="ADMIN123">
+                </div>
+                <button class="btn btn-primary" id="submitLoginBtn" style="margin-top: 8px;" data-i18n="btnLoginSubmit">Login</button>
+            </div>
+
+            <!-- Logged-in Dashboard View -->
+            <div id="adminDashboardView" style="display: none; display: flex; flex-direction: column; gap: 16px;">
+                
+                <!-- Credentials Update Accordion -->
+                <details class="m3-details">
+                    <summary data-i18n="titleCredUpdate">Change Credentials</summary>
+                    <div class="details-content">
+                        <div class="form-field">
+                            <input type="text" id="newAdminIdInput" placeholder="New Admin ID">
+                        </div>
+                        <div class="form-field">
+                            <input type="password" id="newAdminPassInput" placeholder="New Password">
+                        </div>
+                        <button class="btn btn-secondary" id="saveCredentialsBtn" data-i18n="btnSave">Save</button>
+                    </div>
+                </details>
+
+                <!-- Add Participant Form -->
+                <div class="m3-card">
+                    <div class="m3-card-title" data-i18n="addTitle">Add New Participant</div>
+                    <div class="form-field">
+                        <input type="text" id="adminAddName" placeholder="Enter Name">
+                    </div>
+                    <div class="form-field">
+                        <input type="number" id="adminAddNumber" min="10" max="99" placeholder="Lucky Number (10-99)">
+                    </div>
+                    <div class="form-field">
+                        <label data-i18n="labelDate">Participation Date</label>
+                        <input type="datetime-local" id="adminAddDatePicker">
+                    </div>
+                    <button class="btn btn-primary" id="adminAddSubmitBtn" data-i18n="btnSubmit">Add Participant</button>
+                </div>
+
+                <!-- Admin Participant List Search & List -->
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="search-container">
+                        <span class="material-symbols-rounded search-icon">search</span>
+                        <input type="text" class="search-input" id="adminSearchInput" placeholder="Search / खोजें...">
+                    </div>
+                    
+                    <div class="participants-scroll" id="adminPListContainer">
+                        <!-- Script Injection -->
+                    </div>
+                </div>
+
+                <button class="btn btn-outline" id="adminLogoutBtn" style="color: var(--md-sys-color-error); border-color: var(--md-sys-color-outline);" data-i18n="btnLogout">Logout</button>
+            </div>
+        </div>
+
+        <!-- Sync Daily check link -->
+        <div class="sync-footer">
+            <button class="sync-btn" id="forceGenerateBtn">
+                <span class="material-symbols-rounded">sync</span>
+                <span data-i18n="btnSync">Force check daily sync</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar (M3 Design) -->
+    <nav class="bottom-nav">
+        <a class="nav-item active" id="tabCalendarBtn" onclick="switchTab('tabCalendar')">
+            <div class="nav-item-icon-wrapper">
+                <span class="material-symbols-rounded">calendar_month</span>
+            </div>
+            <span class="nav-item-label" data-i18n="tabCalShort">C</span>
+        </a>
+        <a class="nav-item" id="tabRegistryBtn" onclick="switchTab('tabRegistry')">
+            <div class="nav-item-icon-wrapper">
+                <span class="material-symbols-rounded">group</span>
+            </div>
+            <span class="nav-item-label" data-i18n="tabRegShort">Participants</span>
+        </a>
+        <a class="nav-item" id="tabAdminBtn" onclick="switchTab('tabAdmin')">
+            <div class="nav-item-icon-wrapper">
+                <span class="material-symbols-rounded">admin_panel_settings</span>
+            </div>
+            <span class="nav-item-label" data-i18n="tabAdminShort">Admin</span>
+        </a>
+    </nav>
+
+    <!-- Simulated gesture navigation indicator at bottom of screen -->
+    <div class="gesture-indicator"></div>
+</div>
+
+<!-- ==================== MODAL: HISTORICAL DAY DETAIL VIEW (Bottom Sheet) ==================== -->
+<div class="bottom-sheet-overlay" id="detailModal">
+    <div class="bottom-sheet">
+        <div class="sheet-handle" onclick="closeModal('detailModal')"></div>
+        <div class="sheet-header">
+            <span class="sheet-title" id="modalDate">12 June</span>
+            <button class="icon-btn" onclick="closeModal('detailModal')" aria-label="Close">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+        </div>
+        <div>
+            <div class="history-number-badge" id="modalNumber">--</div>
+            <div class="history-meta-text" id="modalMeta">
+                <!-- Script Injection -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL: ADMIN EDIT PARTICIPANT (Bottom Sheet) ==================== -->
+<div class="bottom-sheet-overlay" id="adminEditModal">
+    <div class="bottom-sheet">
+        <div class="sheet-handle" onclick="closeModal('adminEditModal')"></div>
+        <div class="sheet-header">
+            <span class="sheet-title" data-i18n="editTitle">Edit Participant Details</span>
+            <button class="icon-btn" onclick="closeModal('adminEditModal')" aria-label="Close">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+        </div>
+        <div class="form-field">
+            <label for="adminEditName" data-i18n="labelName">Participant Name</label>
+            <input type="text" id="adminEditName">
+        </div>
+        <div class="form-field">
+            <label for="adminEditNumber" data-i18n="labelNumber">Lucky Number (10-99)</label>
+            <input type="number" id="adminEditNumber" min="10" max="99">
+        </div>
+        <div class="form-field">
+            <label for="adminEditDatePicker" data-i18n="labelDate">Participation Date</label>
+            <input type="datetime-local" id="adminEditDatePicker">
+        </div>
+        <button class="btn btn-primary" id="adminSaveEditBtn" data-i18n="btnSave" style="margin-top: 8px;">Save changes</button>
+    </div>
+</div>
+
+<script>
+    // Dictionary System for EN and HI locales
+    const translations = {
+        en: {
+            appTitle: "Lucky Draw Tracker",
+            todaysNumber: "Today's Number",
+            winnerPrefix: "Winner:",
+            btnSync: "Force check daily sync",
+            calendarTitle: "Calendar View",
+            addTitle: "Add New Participant",
+            labelName: "Participant Name",
+            labelNumber: "Lucky Number (10-99)",
+            labelDate: "Participation Date",
+            btnSubmit: "Add Participant",
+            listTitle: "Registry Database",
+            daySu: "S", dayMo: "M", dayTu: "T", dayWe: "W", dayTh: "T", dayFr: "F", daySa: "S",
+            pending: "Pending",
+            noParticipants: "No registered participants found.",
+            emptyNameErr: "Please enter a valid participant name.",
+            numErr: "Number must be a value between 10 and 99.",
+            successAdd: "Registered successfully!",
+            genAt: "Generated at",
+            dailyLimit: "Daily target range:",
+            winnerLabel: "Winner",
+            addedOn: "Added on",
+            adminLoginTitle: "Admin Portal Login",
+            labelAdminId: "Admin ID",
+            labelAdminPass: "Password",
+            btnLoginSubmit: "Login",
+            adminPanelTitle: "Admin Panel Dashboard",
+            btnLogout: "Logout",
+            editTitle: "Edit Participant Details",
+            btnSave: "Save changes",
+            loginSuccess: "Logged in successfully!",
+            loginFail: "Invalid ID or Password!",
+            tabCalShort: "Calendar",
+            tabRegShort: "Participants",
+            tabAdminShort: "Admin",
+            titleCredUpdate: "Change Credentials",
+            credSuccess: "Credentials saved successfully!"
+        },
+        hi: {
+            appTitle: "लकी ड्रा ट्रैकर",
+            todaysNumber: "आज का नंबर",
+            winnerPrefix: "विजेता:",
+            btnSync: "दैनिक सिंक की जांच करें",
+            calendarTitle: "कैलेंडर दृश्य",
+            addTitle: "नया प्रतिभागी जोड़ें",
+            labelName: "प्रतिभागी का नाम",
+            labelNumber: "लकी नंबर (10-99)",
+            labelDate: "भागीदारी की तारीख",
+            btnSubmit: "प्रतिभागी दर्ज करें",
+            listTitle: "सक्रिय डेटाबेस",
+            daySu: "र", dayMo: "सो", dayTu: "मं", dayWe: "बु", dayTh: "गु", dayFr: "शु", daySa: "श",
+            pending: "लंबित",
+            noParticipants: "कोई पंजीकृत प्रतिभागी नहीं मिला।",
+            emptyNameErr: "कृपया एक मान्य नाम दर्ज करें।",
+            numErr: "संख्या 10 और 99 के बीच होनी चाहिए।",
+            successAdd: "सफलतापूर्वक पंजीकृत किया गया!",
+            genAt: "निर्माण समय",
+            dailyLimit: "दैनिक सीमा सीमा:",
+            winnerLabel: "विजेता",
+            addedOn: "जोड़ा गया",
+            adminLoginTitle: "एडमिन पोर्टल लॉगिन",
+            labelAdminId: "एडमिन आईडी",
+            labelAdminPass: "पासवर्ड",
+            btnLoginSubmit: "लॉगिन",
+            adminPanelTitle: "एडमिन पैनल",
+            btnLogout: "लॉगआउट",
+            editTitle: "प्रतिभागी संपादित करें",
+            btnSave: "परिवर्तन सहेजें",
+            loginSuccess: "लॉगिन सफल!",
+            loginFail: "अमान्य आईडी या पासवर्ड!",
+            tabCalShort: "कैलेंडर",
+            tabRegShort: "प्रतिभागी",
+            tabAdminShort: "एडमिन",
+            titleCredUpdate: "क्रेडेंशियल बदलें",
+            credSuccess: "क्रेडेंशियल सफलतापूर्वक सहेजे गए!"
+        }
+    };
+
+    // Global State Elements
+    let currentLocale = localStorage.getItem('locale') || 'hi';
+    let currentCalDate = new Date(); 
+    let isAdminLoggedIn = sessionStorage.getItem('admin_session') === 'true';
+    let historyData = JSON.parse(localStorage.getItem('cal_generator_history') || '[]');
+    
+    // Default 17 seed participants setup (June 2, 2026 matches timezone context)
+    const defaultSeededParticipants = [
+        { id: 1717329600000 + 1, name: "Amit Sharma", number: 24, timestamp: "2 Jun, 09:30 AM" },
+        { id: 1717329600000 + 2, name: "Priya Patel", number: 45, timestamp: "2 Jun, 10:15 AM" },
+        { id: 1717329600000 + 3, name: "Rohan Verma", number: 78, timestamp: "2 Jun, 11:00 AM" },
+        { id: 1717329600000 + 4, name: "Sneha Reddy", number: 12, timestamp: "2 Jun, 11:45 AM" },
+        { id: 1717329600000 + 5, name: "Vijay Singh", number: 99, timestamp: "2 Jun, 12:30 PM" },
+        { id: 1717329600000 + 6, name: "Pooja Gupta", number: 33, timestamp: "2 Jun, 01:15 PM" },
+        { id: 1717329600000 + 7, name: "Rajesh Kumar", number: 56, timestamp: "2 Jun, 02:00 PM" },
+        { id: 1717329600000 + 8, name: "Sunita Rao", number: 88, timestamp: "2 Jun, 02:45 PM" },
+        { id: 1717329600000 + 9, name: "Anil Mehta", number: 15, timestamp: "2 Jun, 03:30 PM" },
+        { id: 1717329600000 + 10, name: "Deepa Nair", number: 67, timestamp: "2 Jun, 04:15 PM" },
+        { id: 1717329600000 + 11, name: "Vikram Joshi", number: 42, timestamp: "2 Jun, 05:00 PM" },
+        { id: 1717329600000 + 12, name: "Neha Mishra", number: 29, timestamp: "2 Jun, 05:45 PM" },
+        { id: 1717329600000 + 13, name: "Suresh Chandra", number: 73, timestamp: "2 Jun, 06:30 PM" },
+        { id: 1717329600000 + 14, name: "Meena Kumari", number: 50, timestamp: "2 Jun, 07:15 PM" },
+        { id: 1717329600000 + 15, name: "Alok Dubey", number: 81, timestamp: "2 Jun, 08:00 PM" },
+        { id: 1717329600000 + 16, name: "Geeta Yadav", number: 37, timestamp: "2 Jun, 08:45 PM" },
+        { id: 1717329600000 + 17, name: "Satya Vishwakarma", number: 95, timestamp: "2 Jun, 09:30 PM" }
+    ];
+
+    let participants = JSON.parse(localStorage.getItem('cal_generator_participants'));
+    if (!participants || participants.length === 0) {
+        participants = defaultSeededParticipants;
+        localStorage.setItem('cal_generator_participants', JSON.stringify(participants));
+    }
+
+    // Editing State
+    let editingParticipantId = null;
+
+    // Elements
+    const langSwitchBtn = document.getElementById('langSwitchBtn');
+    const langOptionHi = document.getElementById('langOptionHi');
+    const langOptionEn = document.getElementById('langOptionEn');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const todayValDisplay = document.getElementById('todayValDisplay');
+    const todayFriendlyDate = document.getElementById('todayFriendlyDate');
+    const winnerNameDisplay = document.getElementById('winnerNameDisplay');
+    const monthYearTitle = document.getElementById('monthYearTitle');
+    const daysContainer = document.getElementById('daysContainer');
+    
+    // Normal List DOM
+    const pListContainer = document.getElementById('pListContainer');
+    const badgeCountLabel = document.getElementById('badgeCountLabel');
+    const normalSearchInput = document.getElementById('normalSearchInput');
+
+    // Admin Dashboard Views
+    const adminLoginView = document.getElementById('adminLoginView');
+    const adminDashboardView = document.getElementById('adminDashboardView');
+
+    // Admin Auth Credentials Inputs
+    const adminIdInput = document.getElementById('adminIdInput');
+    const adminPassInput = document.getElementById('adminPassInput');
+    const submitLoginBtn = document.getElementById('submitLoginBtn');
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+
+    // Admin Credentials Update Form
+    const newAdminIdInput = document.getElementById('newAdminIdInput');
+    const newAdminPassInput = document.getElementById('newAdminPassInput');
+    const saveCredentialsBtn = document.getElementById('saveCredentialsBtn');
+
+    // Admin List/Portal DOM
+    const adminPListContainer = document.getElementById('adminPListContainer');
+    const adminSearchInput = document.getElementById('adminSearchInput');
+
+    // Admin Add Form DOM (DateTimePicker implemented)
+    const adminAddName = document.getElementById('adminAddName');
+    const adminAddNumber = document.getElementById('adminAddNumber');
+    const adminAddDatePicker = document.getElementById('adminAddDatePicker');
+    const adminAddSubmitBtn = document.getElementById('adminAddSubmitBtn');
+
+    // Admin Edit Form DOM (DateTimePicker implemented)
+    const adminEditName = document.getElementById('adminEditName');
+    const adminEditNumber = document.getElementById('adminEditNumber');
+    const adminEditDatePicker = document.getElementById('adminEditDatePicker');
+    const adminSaveEditBtn = document.getElementById('adminSaveEditBtn');
+
+    const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const MONTHS_HI = ["जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
+
+    // Initialize Theme
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggleBtn.querySelector('span').textContent = 'light_mode';
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        themeToggleBtn.querySelector('span').textContent = isDark ? 'light_mode' : 'dark_mode';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // Android status bar time update
+    function updateStatusBarTime() {
+        const timeEl = document.getElementById('statusTime');
+        if (timeEl) {
+            const d = new Date();
+            let h = d.getHours();
+            let m = d.getMinutes();
+            h = h < 10 ? '0' + h : h;
+            m = m < 10 ? '0' + m : m;
+            timeEl.textContent = `${h}:${m}`;
+        }
+    }
+    updateStatusBarTime();
+    setInterval(updateStatusBarTime, 30000);
+
+    // M3 Navigation Tab Swapper
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+            panel.classList.remove('active');
+        });
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        document.getElementById(tabId).classList.add('active');
+        document.getElementById(tabId + 'Btn').classList.add('active');
+
+        // Scroll to top of content container when switching tabs
+        document.querySelector('.screen-content').scrollTop = 0;
+
+        // Render appropriate views
+        if (tabId === 'tabCalendar') renderCalendar();
+        if (tabId === 'tabRegistry') renderParticipants();
+        if (tabId === 'tabAdmin') {
+            checkAdminSession();
+            renderAdminParticipants();
+        }
+    };
+
+    // Translation Applier
+    function applyLocalization(lang) {
+        currentLocale = lang;
+        localStorage.setItem('locale', lang);
+
+        if (lang === 'hi') {
+            langOptionHi.classList.add('active');
+            langOptionEn.classList.remove('active');
+        } else {
+            langOptionEn.classList.add('active');
+            langOptionHi.classList.remove('active');
+        }
+
+        document.querySelectorAll('[data-i18n]').forEach(elem => {
+            const key = elem.getAttribute('data-i18n');
+            if (translations[lang][key]) {
+                elem.textContent = translations[lang][key];
+            }
+        });
+
+        updateTopDisplay();
+        renderCalendar();
+        renderParticipants();
+        renderAdminParticipants();
+    }
+
+    langSwitchBtn.addEventListener('click', () => {
+        const nextLang = (currentLocale === 'hi') ? 'en' : 'hi';
+        applyLocalization(nextLang);
+    });
+
+    // Date/Time Format Helpers
+    function getFriendlyDate(dateObj) {
+        const day = dateObj.getDate();
+        const monthList = currentLocale === 'hi' ? MONTHS_HI : MONTHS_EN;
+        const monthName = monthList[dateObj.getMonth()];
+        return `${day} ${monthName}`;
+    }
+
+    function getLocalDateString(date) {
+        const offset = date.getTimezoneOffset();
+        const adjustedDate = new Date(date.getTime() - (offset * 60 * 1000));
+        return adjustedDate.toISOString().split('T')[0];
+    }
+
+    // Dynamic timestamping formatting for calendar picker results
+    function generateFullTimestamp(dateObj) {
+        const day = dateObj.getDate();
+        const monthList = currentLocale === 'hi' ? MONTHS_HI : MONTHS_EN;
+        const monthName = monthList[dateObj.getMonth()];
+        
+        let hours = dateObj.getHours();
+        let minutes = dateObj.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        
+        return `${day} ${monthName}, ${hours}:${minutes} ${ampm}`;
+    }
+
+    // Core Number Generator Action
+    function generateDailyValue(targetDate) {
+        const dateStr = getLocalDateString(targetDate);
+        
+        if (historyData.some(item => item.date === dateStr)) return;
+
+        const maxLimit = Math.floor(Math.random() * (99 - 10 + 1)) + 10;
+        const finalNum = Math.floor(Math.random() * (maxLimit - 10 + 1)) + 10;
+
+        const record = {
+            date: dateStr,
+            value: finalNum,
+            maxLimit: maxLimit,
+            timestamp: "06:00 AM"
+        };
+
+        historyData.push(record);
+        localStorage.setItem('cal_generator_history', JSON.stringify(historyData));
+    }
+
+    // Sync state controller
+    function runBackendSync() {
+        const now = new Date();
+        const todayStr = getLocalDateString(now);
+        const targetHour = 6; 
+
+        if (now.getHours() >= targetHour) {
+            const hasToday = historyData.some(item => item.date === todayStr);
+            if (!hasToday) {
+                generateDailyValue(now);
+            }
+        } else {
+            const yesterday = new Date(now);
+            yesterday.setDate(now.getDate() - 1);
+            const yesterdayStr = getLocalDateString(yesterday);
+            const hasYesterday = historyData.some(item => item.date === yesterdayStr);
+            if (!hasYesterday) {
+                generateDailyValue(yesterday);
+            }
+        }
+        
+        updateTopDisplay();
+        renderCalendar();
+    }
+
+    // UI Updates
+    function updateTopDisplay() {
+        const now = new Date();
+        const todayStr = getLocalDateString(now);
+        const todayRecord = historyData.find(item => item.date === todayStr);
+        
+        if (todayRecord) {
+            const todayValue = todayRecord.value;
+            todayValDisplay.textContent = todayValue;
+            todayFriendlyDate.textContent = getFriendlyDate(now);
+
+            // Compute Winners
+            const matches = participants.filter(p => Number(p.number) === Number(todayValue));
+            if (matches.length > 0) {
+                winnerNameDisplay.textContent = matches.map(p => p.name).join(', ');
+            } else {
+                winnerNameDisplay.textContent = "Satya Vishwakarma";
+            }
+        } else {
+            todayValDisplay.textContent = "--";
+            todayFriendlyDate.textContent = `${getFriendlyDate(now)} (${translations[currentLocale].pending})`;
+            winnerNameDisplay.textContent = "Satya Vishwakarma";
+        }
+    }
+
+    // Render Calendar Structure
+    function renderCalendar() {
+        const year = currentCalDate.getFullYear();
+        const month = currentCalDate.getMonth();
+
+        const monthList = currentLocale === 'hi' ? MONTHS_HI : MONTHS_EN;
+        monthYearTitle.textContent = `${monthList[month]} ${year}`;
+        daysContainer.innerHTML = '';
+
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const totalDays = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstDayIndex; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'calendar-day empty';
+            daysContainer.appendChild(emptyCell);
+        }
+
+        const todayStr = getLocalDateString(new Date());
+
+        for (let day = 1; day <= totalDays; day++) {
+            const loopDate = new Date(year, month, day);
+            const dateStr = getLocalDateString(loopDate);
+
+            const cell = document.createElement('div');
+            cell.className = 'calendar-day';
+            cell.textContent = day;
+
+            if (dateStr === todayStr) {
+                cell.classList.add('today');
+            }
+
+            const record = historyData.find(item => item.date === dateStr);
+            if (record) {
+                cell.classList.add('has-number');
+                cell.addEventListener('click', () => {
+                    openHistoryDetail(record);
+                });
+            }
+
+            daysContainer.appendChild(cell);
+        }
+    }
+
+    // Modal Control Utils
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    // History Modal display details
+    function openHistoryDetail(record) {
+        const parsedDate = new Date(record.date);
+        document.getElementById('modalDate').textContent = getFriendlyDate(parsedDate);
+        document.getElementById('modalNumber').textContent = record.value;
+
+        // Retrieve historical winner details
+        const matched = participants.filter(p => Number(p.number) === Number(record.value));
+        const historyWinner = matched.length > 0 ? matched.map(p => p.name).join(', ') : "Satya Vishwakarma";
+
+        document.getElementById('modalMeta').innerHTML = `
+            ${translations[currentLocale].genAt} <strong>${record.timestamp}</strong>.<br>
+            ${translations[currentLocale].dailyLimit} 10 - ${record.maxLimit}.<br>
+            <div class="history-winner-highlight">🏆 ${translations[currentLocale].winnerLabel}: ${historyWinner}</div>
+        `;
+        openModal('detailModal');
+    }
+
+    // Render Participant Registry with Case-Insensitive Search
+    function renderParticipants() {
+        pListContainer.innerHTML = '';
+        badgeCountLabel.textContent = participants.length;
+
+        const filterQuery = normalSearchInput.value.toLowerCase().trim();
+        const filteredList = participants.filter(p => p.name.toLowerCase().includes(filterQuery));
+
+        if (filteredList.length === 0) {
+            pListContainer.innerHTML = `<div style="color:var(--md-sys-color-on-surface-variant); font-size:0.85rem; text-align:center; padding:24px 0;">${translations[currentLocale].noParticipants}</div>`;
+            return;
+        }
+
+        filteredList.forEach((p, index) => {
+            const row = document.createElement('div');
+            row.className = 'participant-row';
+            
+            const displayTime = p.timestamp ? p.timestamp : getFriendlyDate(new Date(p.id));
+            const initials = p.name ? p.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
+
+            row.innerHTML = `
+                <div class="row-left">
+                    <div class="row-avatar">${initials}</div>
+                    <div class="row-info">
+                        <span class="row-name">${p.name}</span>
+                        <span class="row-date">${translations[currentLocale].addedOn} ${displayTime}</span>
+                    </div>
+                </div>
+                <div class="row-right">
+                    <span class="row-number">${p.number}</span>
+                </div>
+            `;
+            pListContainer.appendChild(row);
+        });
+    }
+
+    // Render Admin Participants List with Search, Edit, and Delete options
+    function renderAdminParticipants() {
+        if (!adminPListContainer) return;
+        adminPListContainer.innerHTML = '';
+        const filterQuery = adminSearchInput.value.toLowerCase().trim();
+        const filteredList = participants.filter(p => p.name.toLowerCase().includes(filterQuery));
+
+        if (filteredList.length === 0) {
+            adminPListContainer.innerHTML = `<div style="color:var(--md-sys-color-on-surface-variant); font-size:0.85rem; text-align:center; padding:24px 0;">${translations[currentLocale].noParticipants}</div>`;
+            return;
+        }
+
+        filteredList.forEach((p, index) => {
+            const row = document.createElement('div');
+            row.className = 'participant-row';
+            
+            const displayTime = p.timestamp ? p.timestamp : getFriendlyDate(new Date(p.id));
+            const initials = p.name ? p.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
+
+            row.innerHTML = `
+                <div class="row-left">
+                    <div class="row-avatar">${initials}</div>
+                    <div class="row-info">
+                        <span class="row-name">${p.name}</span>
+                        <span class="row-date">${translations[currentLocale].addedOn} ${displayTime}</span>
+                    </div>
+                </div>
+                <div class="row-right">
+                    <span class="row-number">${p.number}</span>
+                    <button class="icon-btn" onclick="openAdminEdit(${p.id})" aria-label="Edit" style="width: 32px; height: 32px; background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);">
+                        <span class="material-symbols-rounded" style="font-size:1.1rem;">edit</span>
+                    </button>
+                    <button class="icon-btn" onclick="adminDeleteParticipant(${p.id})" aria-label="Delete" style="width: 32px; height: 32px; background-color: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container);">
+                        <span class="material-symbols-rounded" style="font-size:1.1rem; color: #ef4444;">delete</span>
+                    </button>
+                </div>
+            `;
+            adminPListContainer.appendChild(row);
+        });
+    }
+
+    // Delete Logic
+    window.adminDeleteParticipant = function(id) {
+        if (confirm(currentLocale === 'hi' ? 'क्या आप वाकई इस प्रतिभागी को हटाना चाहते हैं?' : 'Are you sure you want to delete this participant?')) {
+            participants = participants.filter(p => p.id !== id);
+            localStorage.setItem('cal_generator_participants', JSON.stringify(participants));
+            renderAdminParticipants();
+            updateTopDisplay();
+        }
+    };
+
+    // Open Edit Modal with pre-loaded date picker context
+    window.openAdminEdit = function(id) {
+        const participant = participants.find(p => p.id === id);
+        if (!participant) return;
+
+        editingParticipantId = id;
+        adminEditName.value = participant.name;
+        adminEditNumber.value = participant.number;
+
+        // Populate datetime input standard: YYYY-MM-DDThh:mm
+        const dateObj = new Date(participant.id);
+        const yyyy = dateObj.getFullYear();
+        const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const dd = String(dateObj.getDate()).padStart(2, '0');
+        const hh = String(dateObj.getHours()).padStart(2, '0');
+        const min = String(dateObj.getMinutes()).padStart(2, '0');
+        adminEditDatePicker.value = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+
+        openModal('adminEditModal');
+    };
+
+    // Save Edit Changes
+    adminSaveEditBtn.addEventListener('click', () => {
+        const name = adminEditName.value.trim();
+        const number = parseInt(adminEditNumber.value, 10);
+        const selectedDateTime = adminEditDatePicker.value;
+
+        if (!name) {
+            alert(translations[currentLocale].emptyNameErr);
+            return;
+        }
+        if (isNaN(number) || number < 10 || number > 99) {
+            alert(translations[currentLocale].numErr);
+            return;
+        }
+
+        const dateObj = selectedDateTime ? new Date(selectedDateTime) : new Date();
+        const formattedTimestamp = generateFullTimestamp(dateObj);
+
+        participants = participants.map(p => {
+            if (p.id === editingParticipantId) {
+                return {
+                    ...p,
+                    id: dateObj.getTime(), // Update time signature ID to update chronological location
+                    name: name,
+                    number: number,
+                    timestamp: formattedTimestamp
+                };
+            }
+            return p;
+        });
+
+        localStorage.setItem('cal_generator_participants', JSON.stringify(participants));
+        closeModal('adminEditModal');
+        renderAdminParticipants();
+        updateTopDisplay();
+    });
+
+    // Admin Add Participant Submit Action
+    adminAddSubmitBtn.addEventListener('click', () => {
+        const name = adminAddName.value.trim();
+        const number = parseInt(adminAddNumber.value, 10);
+        const selectedDateTime = adminAddDatePicker.value;
+
+        if (!name) {
+            alert(translations[currentLocale].emptyNameErr);
+            return;
+        }
+        if (isNaN(number) || number < 10 || number > 99) {
+            alert(translations[currentLocale].numErr);
+            return;
+        }
+
+        const dateObj = selectedDateTime ? new Date(selectedDateTime) : new Date();
+        const formattedTimestamp = generateFullTimestamp(dateObj);
+
+        const newP = {
+            id: dateObj.getTime(),
+            name: name,
+            number: number,
+            timestamp: formattedTimestamp
+        };
+
+        participants.push(newP);
+        localStorage.setItem('cal_generator_participants', JSON.stringify(participants));
+
+        // Form Resets
+        adminAddName.value = '';
+        adminAddNumber.value = '';
+        adminAddDatePicker.value = '';
+
+        renderAdminParticipants();
+        updateTopDisplay();
+        alert(translations[currentLocale].successAdd);
+    });
+
+    // Toggle admin visibility based on sessionStorage
+    function checkAdminSession() {
+        if (isAdminLoggedIn) {
+            adminLoginView.style.display = 'none';
+            adminDashboardView.style.display = 'flex';
+        } else {
+            adminLoginView.style.display = 'flex';
+            adminDashboardView.style.display = 'none';
+        }
+    }
+
+    // Authenticate Admin Submit
+    submitLoginBtn.addEventListener('click', () => {
+        const id = adminIdInput.value.trim();
+        const pass = adminPassInput.value.trim();
+
+        const savedAdminId = localStorage.getItem('admin_id') || 'ADMIN';
+        const savedAdminPass = localStorage.getItem('admin_pass') || 'ADMIN123';
+
+        if (id === savedAdminId && pass === savedAdminPass) {
+            isAdminLoggedIn = true;
+            sessionStorage.setItem('admin_session', 'true');
+            checkAdminSession();
+            renderAdminParticipants();
+            
+            // Clear inputs
+            adminIdInput.value = '';
+            adminPassInput.value = '';
+        } else {
+            alert(translations[currentLocale].loginFail);
+        }
+    });
+
+    // Change Admin Credentials logic
+    saveCredentialsBtn.addEventListener('click', () => {
+        const newId = newAdminIdInput.value.trim();
+        const newPass = newAdminPassInput.value.trim();
+
+        if (!newId || !newPass) {
+            alert(currentLocale === 'hi' ? 'कृपया मान्य आईडी और पासवर्ड दर्ज करें।' : 'Please enter a valid ID and Password.');
+            return;
+        }
+
+        localStorage.setItem('admin_id', newId);
+        localStorage.setItem('admin_pass', newPass);
+
+        newAdminIdInput.value = '';
+        newAdminPassInput.value = '';
+
+        alert(translations[currentLocale].credSuccess);
+    });
+
+    // Admin Logout Logic
+    adminLogoutBtn.addEventListener('click', () => {
+        isAdminLoggedIn = false;
+        sessionStorage.removeItem('admin_session');
+        checkAdminSession();
+    });
+
+    // Search inputs with instant feedback
+    normalSearchInput.addEventListener('input', renderParticipants);
+    adminSearchInput.addEventListener('input', renderAdminParticipants);
+
+    // Calendar month offset controls
+    document.getElementById('prevMonth').addEventListener('click', () => {
+        currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+        renderCalendar();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+        currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    document.getElementById('forceGenerateBtn').addEventListener('click', () => {
+        runBackendSync();
+        alert(currentLocale === 'hi' ? 'दैनिक सिंक की जांच पूरी हुई।' : 'Daily synchronization check completed.');
+    });
+
+    // Outer click bottom sheet overlay cancellation
+    document.querySelectorAll('.bottom-sheet-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeModal(overlay.id);
+            }
+        });
+    });
+
+    // Add Material ripple effect to buttons on click
+    document.querySelectorAll('.btn, .icon-btn, .nav-item, .calendar-day').forEach(el => {
+        el.addEventListener('click', function(e) {
+            // Only add ripple if relatively positioned
+            const computedStyle = window.getComputedStyle(this);
+            if (computedStyle.position === 'static') {
+                this.style.position = 'relative';
+            }
+            
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            this.appendChild(ripple);
+            
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = `${size}px`;
+            
+            // For custom positioned elements like calendar days or icons
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 500);
+        });
+    });
+
+    // Bootstrap app state
+    runBackendSync();
+    applyLocalization(currentLocale);
+
+    // Hourly routine check sweep
+    setInterval(runBackendSync, 3600000);
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registered successfully with scope:', reg.scope))
+                .catch(err => console.error('Service Worker registration failed:', err));
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.15" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- Background Circle with Amber/Orange Gradient -->
+  <circle cx="256" cy="256" r="240" fill="url(#grad1)" filter="url(#shadow)" />
+  <!-- Glassmorphism Ring -->
+  <circle cx="256" cy="256" r="240" fill="url(#grad2)" stroke="#ffffff" stroke-width="4" stroke-opacity="0.3" />
+  
+  <!-- Trophy Icon (Golden/Yellow theme) -->
+  <g transform="translate(128, 128) scale(0.5)">
+    <!-- Base -->
+    <path d="M 120 420 L 392 420 L 392 450 L 120 450 Z" fill="#ffffff" />
+    <path d="M 216 350 L 296 350 L 296 420 L 216 420 Z" fill="#fef3c7" />
+    
+    <!-- Cup Body -->
+    <path d="M 130 120 L 382 120 L 362 300 C 362 350, 312 370, 256 370 C 200 370, 150 350, 150 300 Z" fill="#ffffff" />
+    
+    <!-- Left Handle -->
+    <path d="M 130 150 C 70 150, 70 250, 150 270 C 145 250, 140 200, 130 150 Z" fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" />
+    <!-- Right Handle -->
+    <path d="M 382 150 C 442 150, 442 250, 362 270 C 367 250, 372 200, 382 150 Z" fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" />
+    
+    <!-- Star on Cup -->
+    <polygon points="256,170 272,210 315,210 280,236 294,276 256,250 218,276 232,236 197,210 240,210" fill="#f59e0b" />
+  </g>
+</svg>
