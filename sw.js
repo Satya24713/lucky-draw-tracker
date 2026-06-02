@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lucky-draw-tracker-v1';
+const CACHE_NAME = 'lucky-draw-tracker-v2'; // Bumped version
 const ASSETS = [
   './',
   './index.html',
@@ -6,23 +6,17 @@ const ASSETS = [
   './icon.svg'
 ];
 
-// Install Event
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    }).then(() => self.skipWaiting())
-  );
+  self.skipWaiting(); // Force the new service worker to activate immediately
 });
 
-// Activate Event
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
-            return caches.delete(key);
+            return caches.delete(key); // Clear out the old stubborn cache
           }
         })
       );
@@ -30,25 +24,20 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Fetch Event
+// Network-First Strategy
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(e.request).then((networkResponse) => {
-        // Cache dynamic Google Font requests or fallback
-        if (e.request.url.includes('fonts.googleapis.com') || e.request.url.includes('fonts.gstatic.com')) {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(e.request, networkResponse.clone());
-            return networkResponse;
-          });
-        }
-        return networkResponse;
-      });
-    }).catch(() => {
-      // Offline fallback can be added here if needed
-    })
+    fetch(e.request)
+      .then((networkResponse) => {
+        // If network fetch is successful, clone it to the cache and return it
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, networkResponse.clone());
+          return networkResponse;
+        });
+      })
+      .catch(() => {
+        // If network fails (offline), fallback to the cache
+        return caches.match(e.request);
+      })
   );
 });

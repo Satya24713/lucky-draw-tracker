@@ -100,12 +100,12 @@
 
         body {
             font-family: var(--font-family);
-            background-color: #121212; /* Sleek pitch background for desktop frame */
+            background-color: #121212; 
             color: var(--md-sys-color-on-background);
-            min-height: 100vh;
+            min-height: 100dvh; /* Changed to dvh for better mobile viewport handling */
             display: flex;
             justify-content: center;
-            align-items: center;
+            /* Removed align-items: center; so it can stretch or sit flush */
             overflow-x: hidden;
             transition: background-color var(--transition-duration) var(--transition-timing);
         }
@@ -114,16 +114,16 @@
         .app-wrapper {
             position: relative;
             width: 100%;
-            height: 100vh;
+            height: 100dvh; /* Changed to dvh */
             max-width: 440px;
-            max-height: 900px;
+            max-height: 100dvh; /* Allow it to fill the entire vertical space */
             background-color: var(--md-sys-color-background);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0px 24px 48px rgba(0, 0, 0, 0.4);
-            border-radius: 40px;
-            border: 8px solid #2d2d30; /* Phone border outline */
+            border-left: 8px solid #2d2d30; /* Only side borders if you want the phone look */
+            border-right: 8px solid #2d2d30;
             transition: background-color var(--transition-duration) var(--transition-timing);
         }
 
@@ -919,7 +919,7 @@
                 border: none;
                 border-radius: 0;
                 max-width: 100%;
-                max-height: 100vh;
+                max-height: 100dvh;
             }
             .status-bar {
                 display: none; /* Hide custom status bar on real phones */
@@ -969,6 +969,10 @@
                     <div class="lang-btn" id="langOptionHi">हिन्दी</div>
                     <div class="lang-btn" id="langOptionEn">EN</div>
                 </div>
+                <!-- Zero-gravity toggle -->
+                <button class="icon-btn" id="gravityToggleBtn" aria-label="Toggle Zero Gravity" style="margin-right: 2px;">
+                    <span class="material-symbols-rounded">bubble_chart</span>
+                </button>
                 <!-- Dark mode toggle -->
                 <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Theme">
                     <span class="material-symbols-rounded">dark_mode</span>
@@ -1393,6 +1397,11 @@
         if (tabId === 'tabAdmin') {
             checkAdminSession();
             renderAdminParticipants();
+        }
+
+        // Re-initialize gravity if enabled
+        if (typeof isGravityEnabled !== 'undefined' && isGravityEnabled) {
+            setTimeout(initGravity, 60);
         }
     };
 
@@ -1897,6 +1906,163 @@
             }, 500);
         });
     });
+
+    // Zero-gravity physics simulation
+    let isGravityEnabled = false;
+    let gravityAnimationId = null;
+    let floatingElements = [];
+
+    function initGravity() {
+        // Collect floatable components within the screen content viewport
+        const elementsToFloat = document.querySelectorAll(
+            '.dashboard-banner, .m3-card, .participant-row, .calendar-nav, .calendar-grid, .search-container, details.m3-details'
+        );
+        
+        floatingElements = [];
+        
+        const container = document.querySelector('.screen-content');
+        const containerRect = container.getBoundingClientRect();
+        
+        elementsToFloat.forEach((el, index) => {
+            if (!el.dataset.origStyle) {
+                // Save inline styles to cleanly restore them later
+                el.dataset.origStyle = el.getAttribute('style') || '';
+            }
+            
+            // Set styles for floating
+            el.style.position = 'relative';
+            el.style.zIndex = '5';
+            el.style.transition = 'none'; // Prevent standard CSS layout animations
+            
+            const rect = el.getBoundingClientRect();
+            
+            // Random start values and velocities
+            floatingElements.push({
+                element: el,
+                x: 0,
+                y: 0,
+                vx: (Math.random() - 0.5) * 1.6,
+                vy: (Math.random() - 0.5) * 1.6,
+                angle: 0,
+                va: (Math.random() - 0.5) * 0.12, // small rotational velocity
+                width: rect.width,
+                height: rect.height
+            });
+        });
+    }
+
+    function updateGravity() {
+        if (!isGravityEnabled) return;
+        
+        const container = document.querySelector('.screen-content');
+        const containerRect = container.getBoundingClientRect();
+        
+        floatingElements.forEach((item, index) => {
+            // Apply velocities
+            item.x += item.vx;
+            item.y += item.vy;
+            item.angle += item.va;
+            
+            // Wall collisions based on relative element coordinates in screen viewport
+            const elRect = item.element.getBoundingClientRect();
+            const relativeLeft = elRect.left - containerRect.left;
+            const relativeRight = elRect.right - containerRect.left;
+            const relativeTop = elRect.top - containerRect.top;
+            const relativeBottom = elRect.bottom - containerRect.top;
+            
+            // Side boundary checks
+            if (relativeLeft < 0 && item.vx < 0) item.vx *= -1;
+            if (relativeRight > containerRect.width && item.vx > 0) item.vx *= -1;
+            
+            // Vertical boundary checks
+            if (relativeTop < 0 && item.vy < 0) item.vy *= -1;
+            if (relativeBottom > containerRect.height - 80 && item.vy > 0) item.vy *= -1; // stay above navigation
+            
+            // Double check safety boundaries to prevent items escaping
+            const maxEscapeX = containerRect.width / 2;
+            const maxEscapeY = containerRect.height / 2;
+            if (Math.abs(item.x) > maxEscapeX) {
+                item.x = Math.sign(item.x) * maxEscapeX;
+                item.vx *= -1;
+            }
+            if (Math.abs(item.y) > maxEscapeY) {
+                item.y = Math.sign(item.y) * maxEscapeY;
+                item.vy *= -1;
+            }
+            
+            // Collision checks against other items
+            for (let j = index + 1; j < floatingElements.length; j++) {
+                const other = floatingElements[j];
+                const dx = item.x - other.x;
+                const dy = item.y - other.y;
+                const distance = Math.hypot(dx, dy);
+                const collisionThreshold = 60; // minimum collision separation
+                
+                if (distance < collisionThreshold) {
+                    // Simple elastic collision velocity swap
+                    const tempVx = item.vx;
+                    const tempVy = item.vy;
+                    item.vx = other.vx;
+                    item.vy = other.vy;
+                    other.vx = tempVx;
+                    other.vy = tempVy;
+                    
+                    // Push apart to prevent sticking
+                    const pushFactor = (collisionThreshold - distance) / 2;
+                    const pushX = (dx / (distance || 1)) * pushFactor;
+                    const pushY = (dy / (distance || 1)) * pushFactor;
+                    item.x += pushX;
+                    item.y += pushY;
+                    other.x -= pushX;
+                    other.y -= pushY;
+                }
+            }
+            
+            // Set M3 CSS 3D Transforms
+            item.element.style.transform = `translate3d(${item.x}px, ${item.y}px, 0) rotate(${item.angle}deg)`;
+        });
+        
+        gravityAnimationId = requestAnimationFrame(updateGravity);
+    }
+
+    function toggleGravity() {
+        isGravityEnabled = !isGravityEnabled;
+        const btn = document.getElementById('gravityToggleBtn');
+        
+        if (isGravityEnabled) {
+            btn.style.backgroundColor = 'var(--md-sys-color-primary-container)';
+            btn.style.color = 'var(--md-sys-color-on-primary-container)';
+            btn.querySelector('span').textContent = 'rocket_launch';
+            initGravity();
+            updateGravity();
+        } else {
+            if (gravityAnimationId) {
+                cancelAnimationFrame(gravityAnimationId);
+                gravityAnimationId = null;
+            }
+            btn.style.backgroundColor = '';
+            btn.style.color = '';
+            btn.querySelector('span').textContent = 'bubble_chart';
+            
+            // Smoothly ease back to regular CSS grid/flex locations
+            floatingElements.forEach(item => {
+                item.element.style.transition = 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                item.element.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+                
+                setTimeout(() => {
+                    // Clean up inline adjustments
+                    item.element.setAttribute('style', item.element.dataset.origStyle || '');
+                }, 600);
+            });
+            floatingElements = [];
+        }
+    }
+
+    // Expose gravity features globally so it can be re-bound
+    window.isGravityEnabled = isGravityEnabled;
+    window.initGravity = initGravity;
+
+    document.getElementById('gravityToggleBtn').addEventListener('click', toggleGravity);
 
     // Bootstrap app state
     runBackendSync();
